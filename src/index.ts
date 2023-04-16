@@ -89,7 +89,7 @@ server.register(proxy, {
 	cacheURLs: 0,
 });
 
-server.listen(8080, (err, address) => {
+server.listen(80, '0.0.0.0', (err, address) => {
 	if (err) {
 		console.error(err);
 		process.exit(1);
