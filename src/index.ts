@@ -60,6 +60,7 @@ function changeBody(request: any, reply: any, res: any, callback: any) {
 	} else reply.send(res);
 }
 
+//www-go-com
 const decodeHost = (input: string): string => {
 	const host = input.split('.')[0].replace(/--/g, '@@@@@@');
 	const parts = host.split('-');
@@ -85,6 +86,8 @@ server.register(proxy, {
 			console.log(reply.statusCode);
 			const host = request.headers.wow as string;
 			console.log({ host });
+			//@ts-ignore
+			delete reply.headers['x-frame-options'];
 			changeBody(request, reply, res, (body: string) => {
 				return (
 					body.replace(new RegExp(host, 'g'), `http://proxy.mopix.io:8080`) +
