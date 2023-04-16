@@ -60,12 +60,20 @@ function changeBody(request: any, reply: any, res: any, callback: any) {
 	} else reply.send(res);
 }
 
+const decodeHost = (input: string): string => {
+	const host = input.split('.')[0].replace(/--/g, '@@@@@@');
+	const parts = host.split('-');
+	parts.pop();
+	const actualHost = parts.join('.').replace(/@@@@@@/g, '-');
+	return actualHost;
+};
+
 server.register(proxy, {
 	upstream: '',
 	preHandler: async (req, res) => {
 		console.log({ host: req.url });
 		//@ts-ignore
-		req.headers.wow = 'https://laladesign.co.il/';
+		req.headers.wow = 'https://' + decodeHost(req.headers.host as string);
 	},
 	replyOptions: {
 		getUpstream: (req: any | IncomingMessage, _base: string) => {
@@ -78,9 +86,9 @@ server.register(proxy, {
 			const host = request.headers.wow as string;
 			console.log({ host });
 			changeBody(request, reply, res, (body: string) => {
-				console.log({ body });
 				return (
-					body.replace(new RegExp(host, 'g'), `http://127.0.0.1:8080/`) + script
+					body.replace(new RegExp(host, 'g'), `http://proxy.mopix.io:8080`) +
+					script
 				);
 			});
 		},
@@ -89,7 +97,7 @@ server.register(proxy, {
 	cacheURLs: 0,
 });
 
-server.listen(80, '0.0.0.0', (err, address) => {
+server.listen(8080, '0.0.0.0', (err, address) => {
 	if (err) {
 		console.error(err);
 		process.exit(1);
