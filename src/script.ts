@@ -34,7 +34,7 @@ const script = `<div
 			    });
 
 			    window.addEventListener('message', function(event) {
-			        event.data === 'chooseTarget' ? chooseTargetHandler() :
+			        event.data === 'chooseTarget' ? chooseTargetHandler(false) : event.data === 'chooseTriggerTarget' ? chooseTargetHandler(true) :
 			        createFunctionFromString(event.data);
 			        tl.play();
 			      });
@@ -59,21 +59,21 @@ const script = `<div
 			        e.target.classList.remove('hova');
 			    }
 
-			    function clickHandler(e) {
+			    function clickHandler(isTriggerTarget) {
 			        let isText = false;
-			        e.target.childNodes[0].nodeType === 3 ? (isText = true) : (isText = false);
+					e.target.childNodes[0].nodeType === 3 ? (isText = true) : (isText = false);
 			        removeTargetHandler(e)
-			       const message = [e.target.className, e.target.id, isText];
+			       const message = [e.target.className, e.target.id, isText, isTriggerTarget];
 			        window.parent.postMessage(message, '*');
 			        e.preventDefault();
 			    }
 
-			    function chooseTargetHandler(e) {
+			    function chooseTargetHandler(isTriggerTarget, e) {
 			    for (let i = 0; i < children.length; i++) {
 			        const child = children[i];
 			        child.addEventListener('mouseover', mouseoverHandler);
 			        child.addEventListener('mouseout', mouseoutHandler);
-			        child.addEventListener('click', clickHandler);
+			        child.addEventListener('click', clickHandler(isTriggerTarget));
 			    }
 			}
 			function removeTargetHandler(e) {

@@ -1,10 +1,4 @@
-import fastify, {
-	FastifyReply,
-	FastifyRequest,
-	RawReplyDefaultExpression,
-	RawServerBase,
-} from 'fastify';
-import fetch from 'node-fetch';
+import fastify from 'fastify';
 import proxy from '@fastify/http-proxy';
 import zlib from 'zlib';
 import { IncomingMessage } from 'http';
@@ -105,5 +99,4 @@ server.listen(8080, '0.0.0.0', (err, address) => {
 		console.error(err);
 		process.exit(1);
 	}
-	console.log(`Started server at ${address}`);
 });
