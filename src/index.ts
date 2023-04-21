@@ -59,6 +59,7 @@ const decodeHost = (input: string): string => {
 	const parts = host.split('-');
 	parts.pop();
 	const actualHost = parts.join('.').replace(/@@@@@@/g, '-');
+	// const actualHost = 'www.magicflow.ai';
 	return actualHost;
 };
 
@@ -76,9 +77,7 @@ server.register(proxy, {
 			return url;
 		},
 		onResponse: (request, reply, res) => {
-			console.log(reply.statusCode);
 			const host = request.headers.wow as string;
-			console.log({ host });
 			changeBody(request, reply, res, (body: string) => {
 				return (
 					body.replace(new RegExp(host, 'g'), `http://proxy.mopix.io:8080`) +
