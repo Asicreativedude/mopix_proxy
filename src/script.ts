@@ -59,7 +59,7 @@ const script = `<div
 			        e.target.classList.remove('hova');
 			    }
 
-			    function clickHandler(isTriggerTarget) {
+			    function clickHandler(isTriggerTarget, e) {
 			        let isText = false;
 					e.target.childNodes[0].nodeType === 3 ? (isText = true) : (isText = false);
 			        removeTargetHandler(e)
