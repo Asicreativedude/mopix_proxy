@@ -55,11 +55,11 @@ function changeBody(request: any, reply: any, res: any, callback: any) {
 }
 
 const decodeHost = (input: string): string => {
-	const host = input.split('.')[0].replace(/--/g, '@@@@@@');
-	const parts = host.split('-');
-	parts.pop();
-	const actualHost = parts.join('.').replace(/@@@@@@/g, '-');
-	// const actualHost = 'www.magicflow.ai';
+	// const host = input.split('.')[0].replace(/--/g, '@@@@@@');
+	// const parts = host.split('-');
+	// parts.pop();
+	// const actualHost = parts.join('.').replace(/@@@@@@/g, '-');
+	const actualHost = 'www.usesapi.com';
 	return actualHost;
 };
 

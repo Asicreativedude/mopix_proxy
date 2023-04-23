@@ -29,18 +29,24 @@ const script = `<div
 			    let tl = gsap.timeline();
 			    tl.eventCallback('onComplete', () => {
 			        setTimeout(() => {
-			            tl.revert();
+			            tl.reversed(true).progress(0);
 			        }, 500);
 			    });
-
-			    window.addEventListener('message', function(event) {
-					event.data === 'chooseTarget' ? chooseTargetHandler(false) : event.data === 'chooseTriggerTarget' ? chooseTargetHandler(true) :  createFunctionFromString(event.data); tl.play();
-			      });
-
+			
+				window.addEventListener('message', function (event) {
+				
+					event.data === 'chooseTarget'
+						? chooseTargetHandler(false)
+						: event.data === 'chooseTriggerTarget'
+						? chooseTargetHandler(true)
+						: event.data[0] === 'preview'
+						? (createFunctionFromString(event.data[1]), tl.play())
+						: null;
+				});
 			      function createFunctionFromString(str) {
 			        return new Function('return ' + str)();
 			        }
-
+					
 			    const children = body.children;
 
 			    function mouseoverHandler(e) {
@@ -62,10 +68,19 @@ const script = `<div
 			        let isText = false;
 					e.target.childNodes[0] && (e.target.childNodes[0].nodeType === 3 ? (isText = true) : (isText = false))
 			        removeTargetHandler(e)
-					const message = [{element: [e.target.className, e.target.id], parent: [...e.target.parentNode.classList, e.target.parentNode.id], grandparent: [...e.target.parentNode.parentNode.classList, e.target.parentNode.parentNode.id]}, isText, isTrigger]
+					const elementClasses =[...e.target.classList];
+					const elementId = e.target.id;
+					const parentClasses = [...e.target.parentNode.classList];
+					const parentId = e.target.parentNode.id;
+					const grandparentClasses = [...e.target.parentNode.parentNode.classList];
+					const grandparentId = e.target.parentNode.parentNode.id;
+					const message = [{element: [elementClasses, elementId], parent: [parentClasses, parentId], grandparent: [grandparentClasses, grandparentId]}, isText, isTrigger]
 					window.parent.postMessage(message, '*');
 			        e.preventDefault();
 			    }
+
+
+				
 
 			    function chooseTargetHandler(isTrigger) {
 			    for (let i = 0; i < children.length; i++) {
