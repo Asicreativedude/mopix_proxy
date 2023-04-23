@@ -34,11 +34,12 @@ const script = `<div
 			    });
 			
 				window.addEventListener('message', function (event) {
-				
 					event.data === 'chooseTarget'
-						? chooseTargetHandler(false)
+						? chooseTargetHandler(false, false)
 						: event.data === 'chooseTriggerTarget'
-						? chooseTargetHandler(true)
+						? chooseTargetHandler(true, false) 
+						: event.data === 'chooseScrollTarget' 
+						? chooseTargetHandler(false, true)
 						: event.data[0] === 'preview'
 						? (createFunctionFromString(event.data[1]), tl.play())
 						: null;
@@ -64,7 +65,7 @@ const script = `<div
 			        e.target.classList.remove('hova');
 			    }
 
-			    function clickHandler(e, isTrigger) {
+			    function clickHandler(e, isTrigger, isScroll) {
 			        let isText = false;
 					e.target.childNodes[0] && (e.target.childNodes[0].nodeType === 3 ? (isText = true) : (isText = false))
 			        removeTargetHandler(e)
@@ -74,7 +75,7 @@ const script = `<div
 					const parentId = e.target.parentNode.id;
 					const grandparentClasses = [...e.target.parentNode.parentNode.classList];
 					const grandparentId = e.target.parentNode.parentNode.id;
-					const message = [{element: [elementClasses, elementId], parent: [parentClasses, parentId], grandparent: [grandparentClasses, grandparentId]}, isText, isTrigger]
+					const message = [{element: [elementClasses, elementId], parent: [parentClasses, parentId], grandparent: [grandparentClasses, grandparentId]}, isText, isTrigger, isScroll]
 					window.parent.postMessage(message, '*');
 			        e.preventDefault();
 			    }
@@ -82,12 +83,12 @@ const script = `<div
 
 				
 
-			    function chooseTargetHandler(isTrigger) {
+			    function chooseTargetHandler(isTrigger, isScroll) {
 			    for (let i = 0; i < children.length; i++) {
 			        const child = children[i];
 			        child.addEventListener('mouseover', mouseoverHandler);
 			        child.addEventListener('mouseout', mouseoutHandler);
-			        child.addEventListener('click', (e) => {clickHandler(e, isTrigger)});
+			        child.addEventListener('click', (e) => {clickHandler(e, isTrigger, isScroll)});
 			    }
 			}
 			function removeTargetHandler(e) {
