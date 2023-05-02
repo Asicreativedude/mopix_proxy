@@ -23,31 +23,70 @@ const script = `<div
 			        }
 			    </style>
 			    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+				<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+				<script src="https://unpkg.com/split-type"></script>
+				<script src="SCRIPT_URL"></script>
+
 			    <script>
 			    const inspector = document.querySelector('.inspector-overlay');
 			    const body = document.querySelector('body');
-			    let tl = gsap.timeline();
-			    tl.eventCallback('onComplete', () => {
-			        setTimeout(() => {
-			            tl.reversed(true).progress(0);
-			        }, 500);
-			    });
-			
+				
+			  
+		
+				// toggle gsap scroll aniamtion markers
+				function toggleMarkers() {
+					const markers = [document.querySelector('.gsap-marker-scroller-start'), document.querySelector('.gsap-marker-scroller-end'), document.querySelector('.gsap-marker-start'), document.querySelector('.gsap-marker-end')];
+					markers.forEach(marker => {
+						marker.style.display === 'block' ? marker.style.display = 'none' : marker.style.display = 'block';
+					})
+				}
+				let isScroll = false;
+				let isTrigger = false;
+
 				window.addEventListener('message', function (event) {
-					event.data === 'chooseTarget'
-						? chooseTargetHandler(false, false)
-						: event.data === 'chooseTriggerTarget'
-						? chooseTargetHandler(true, false) 
-						: event.data === 'chooseScrollTarget' 
-						? chooseTargetHandler(false, true)
-						: event.data[0] === 'preview'
-						? (createFunctionFromString(event.data[1]), tl.play())
-						: null;
+					isScroll = false;
+					isTrigger = false;
+					
+					if(event.data === 'chooseTarget')
+					{
+						chooseTargetHandler()
+						return;
+					} 
+					if(event.data === 'chooseTriggerTarget')
+					{
+						isTrigger = true;
+						chooseTargetHandler()
+						return;
+					} 
+					if(event.data === 'chooseScrollTarget')
+					{
+						isScroll = true;
+						chooseTargetHandler()
+						return;
+					}
+					if(event.data[0] === 'preview')
+					{
+						createFunctionFromString(event.data[1])
+						window.mtl.play();
+						return;
+					} 
+					if(event.data ==='showMarkers')
+					{
+						toggleMarkers();
+						return;
+					}
 				});
+
+				
 			      function createFunctionFromString(str) {
-			        return new Function('return ' + str)();
+					
+					//  return new Function('return ' + str)();
+					let anim = new Function('let tl = gsap.timeline();' + str + ';return tl;')
+					window.mtl.add(anim());
+									
 			        }
 					
+				
 			    const children = body.children;
 
 			    function mouseoverHandler(e) {
@@ -65,7 +104,7 @@ const script = `<div
 			        e.target.classList.remove('hova');
 			    }
 
-			    function clickHandler(e, isTrigger, isScroll) {
+			    function clickHandler(e) {
 			        let isText = false;
 					e.target.childNodes[0] && (e.target.childNodes[0].nodeType === 3 ? (isText = true) : (isText = false))
 			        removeTargetHandler(e)
@@ -80,15 +119,14 @@ const script = `<div
 			        e.preventDefault();
 			    }
 
-
-				
+					
 
 			    function chooseTargetHandler(isTrigger, isScroll) {
 			    for (let i = 0; i < children.length; i++) {
 			        const child = children[i];
 			        child.addEventListener('mouseover', mouseoverHandler);
 			        child.addEventListener('mouseout', mouseoutHandler);
-			        child.addEventListener('click', (e) => {clickHandler(e, isTrigger, isScroll)});
+			        child.addEventListener('click', clickHandler);
 			    }
 			}
 			function removeTargetHandler(e) {
@@ -116,6 +154,17 @@ const script = `<div
 			        overlay.lastChild.setAttribute('stroke', 'red');
 			    }
 
+
+
+				//splittype Function	
+				function splitType(target) {
+					let typeSplit = new SplitType(target, {
+						types: 'words, chars',
+						tagName: 'span',
+					});
+				}
+
+				// splitType('.hero-title');
 			</script>
 			    `;
 export default script;

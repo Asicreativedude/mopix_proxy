@@ -59,7 +59,7 @@ const decodeHost = (input: string): string => {
 	// const parts = host.split('-');
 	// parts.pop();
 	// const actualHost = parts.join('.').replace(/@@@@@@/g, '-');
-	const actualHost = 'www.usesapi.com';
+	const actualHost = 'or-lev-cohen.com';
 	return actualHost;
 };
 
@@ -80,8 +80,14 @@ server.register(proxy, {
 			const host = request.headers.wow as string;
 			changeBody(request, reply, res, (body: string) => {
 				return (
-					body.replace(new RegExp(host, 'g'), `http://proxy.mopix.io:8080`) +
-					script
+					body.replace(
+						new RegExp('https://' + host, 'g'),
+						`http://localhost:8080`
+					) +
+					script.replace(
+						'SCRIPT_URL',
+						'http://127.0.0.1:5001/mopix-d18fb/us-central1/createAnimationScript?userId=xahaDymlgpfHQVpL8FMiF2m5RUo1&projectId=wieZGNTgyt7Ohwh8wW18'
+					)
 				);
 			});
 		},
