@@ -59,7 +59,7 @@ const decodeHost = (input: string): string => {
 	// const parts = host.split('-');
 	// parts.pop();
 	// const actualHost = parts.join('.').replace(/@@@@@@/g, '-');
-	const actualHost = 'or-lev-cohen.com';
+	const actualHost = 'mopix.netlify.app';
 	return actualHost;
 };
 

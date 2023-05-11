@@ -14,17 +14,13 @@ const script = `<div
 			        z-index: 9999;
 			        pointer-events: none;
 			        }
-			        body{
-			            background-color: #fff;
-			        }
+			        
 			        .disabled{
 			            pointer-events: none;
 			            display: none;
 			        }
 			    </style>
-			    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-				<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
-				<script src="https://unpkg.com/split-type"></script>
+			
 				<script src="SCRIPT_URL"></script>
 
 			    <script>
@@ -32,7 +28,6 @@ const script = `<div
 			    const body = document.querySelector('body');
 				
 			  
-		
 				// toggle gsap scroll aniamtion markers
 				function toggleMarkers() {
 					const markers = [document.querySelector('.gsap-marker-scroller-start'), document.querySelector('.gsap-marker-scroller-end'), document.querySelector('.gsap-marker-start'), document.querySelector('.gsap-marker-end')];
@@ -40,52 +35,59 @@ const script = `<div
 						marker.style.display === 'block' ? marker.style.display = 'none' : marker.style.display = 'block';
 					})
 				}
+
 				let isScroll = false;
 				let isTrigger = false;
 
 				window.addEventListener('message', function (event) {
 					isScroll = false;
 					isTrigger = false;
-					
-					if(event.data === 'chooseTarget')
-					{
-						chooseTargetHandler()
-						return;
-					} 
-					if(event.data === 'chooseTriggerTarget')
-					{
-						isTrigger = true;
-						chooseTargetHandler()
-						return;
-					} 
-					if(event.data === 'chooseScrollTarget')
-					{
-						isScroll = true;
-						chooseTargetHandler()
+				
+					if (event.data === 'chooseTarget') {
+						chooseTargetHandler();
 						return;
 					}
-					if(event.data[0] === 'preview')
-					{
-						createFunctionFromString(event.data[1])
+					if (event.data === 'chooseTriggerTarget') {
+						isTrigger = true;
+						chooseTargetHandler();
+						return;
+					}
+					if (event.data === 'chooseScrollTarget') {
+						isScroll = true;
+						chooseTargetHandler();
+						return;
+					}
+					if (event.data[0] === 'preview') {
+						console.log(event.data[1]);
+						createFunctionFromString(event.data[1]);
 						window.mtl.play();
 						return;
-					} 
-					if(event.data ==='showMarkers')
-					{
+					}
+					if (event.data === 'showMarkers') {
 						toggleMarkers();
 						return;
 					}
+					if (event.data[0] === 'deleteAnimation') {
+						console.log(event.data[1]);
+						deleteAnimation(event.data[1]);
+					}
 				});
+				
 
 				
-			      function createFunctionFromString(str) {
+				function createFunctionFromString(str) {
+					let anim = new Function('let tl = gsap.timeline();' + str + ';return tl;');
+					if (window.mtl.getChildren().length === 1) {
+						window.mtl.add(anim())
+					} else {
+						window.mtl.add(anim(), "<")
+					}
+				}
 					
-					//  return new Function('return ' + str)();
-					let anim = new Function('let tl = gsap.timeline();' + str + ';return tl;')
-					window.mtl.add(anim());
-									
-			        }
-					
+					function deleteAnimation(id){
+						let dtl = window.mtl.getById(id)
+						dtl.revert();
+					}
 				
 			    const children = body.children;
 
@@ -164,7 +166,7 @@ const script = `<div
 					});
 				}
 
-				// splitType('.hero-title');
+				
 			</script>
 			    `;
 export default script;
