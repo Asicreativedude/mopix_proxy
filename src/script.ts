@@ -58,7 +58,6 @@ const script = `<div
 						return;
 					}
 					if (event.data[0] === 'preview') {
-						console.log(event.data[1]);
 						createFunctionFromString(event.data[1]);
 						window.mtl.play();
 						return;
@@ -68,8 +67,11 @@ const script = `<div
 						return;
 					}
 					if (event.data[0] === 'deleteAnimation') {
-						console.log(event.data[1]);
+					
 						deleteAnimation(event.data[1]);
+					}
+					if(event.data[0] === 'splitText'){
+						splitType(event.data[1]);
 					}
 				});
 				
@@ -159,12 +161,7 @@ const script = `<div
 
 
 				//splittype Function	
-				function splitType(target) {
-					let typeSplit = new SplitType(target, {
-						types: 'words, chars',
-						tagName: 'span',
-					});
-				}
+				
 
 				
 			</script>
