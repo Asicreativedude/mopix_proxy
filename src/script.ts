@@ -57,35 +57,33 @@ const script = `<div
 						chooseTargetHandler();
 						return;
 					}
-					if (event.data[0] === 'preview') {
+					if (event.data[0] === 'createAnimation') {
 						createFunctionFromString(event.data[1]);
-						window.mtl.play();
 						return;
+					}
+					if (event.data[0] === 'updateAnimation') {
+						updateAnimation(event.data[1]);
+						
+						return;
+					}
+					if(event.data[0] === 'play')
+					{
+						window.mtl.seek(event.data[1]);
+												return;
 					}
 					if (event.data === 'showMarkers') {
 						toggleMarkers();
 						return;
 					}
 					if (event.data[0] === 'deleteAnimation') {
-					
-						deleteAnimation(event.data[1]);
+							deleteAnimation(event.data[1]);
 					}
 					if(event.data[0] === 'splitText'){
 						splitType(event.data[1]);
 					}
 				});
 				
-
 				
-				function createFunctionFromString(str) {
-					let anim = new Function('let tl = gsap.timeline();' + str + ';return tl;');
-					if (window.mtl.getChildren().length === 1) {
-						window.mtl.add(anim())
-					} else {
-						window.mtl.add(anim(), "<")
-					}
-				}
-					
 					function deleteAnimation(id){
 						let dtl = window.mtl.getById(id)
 						dtl.revert();
@@ -113,6 +111,22 @@ const script = `<div
 					e.target.childNodes[0] && (e.target.childNodes[0].nodeType === 3 ? (isText = true) : (isText = false))
 			        removeTargetHandler(e)
 					const elementClasses =[...e.target.classList];
+					if(elementClasses.length === 0)
+					{
+						let pathToElement = [];
+						let parent = e.target.parentNode;
+						const index = Array.from(parent.children).indexOf(e.target) + 1;
+						let query
+						while(parent !== null && parent !== undefined && parent.tagName !== 'BODY')
+						{
+							pathToElement.push(\`.\${parent.classList[0]}\`\)
+							parent = parent.parentNode;
+
+						}
+							query = 'body >' + reverseJoin(pathToElement) + ' > ' + e.target.tagName.toLowerCase() + ':nth-child(' + index + ')';
+							elementClasses.push(query);
+					}
+						
 					const elementId = e.target.id;
 					const parentClasses = [...e.target.parentNode.classList];
 					const parentId = e.target.parentNode.id;
@@ -123,7 +137,9 @@ const script = `<div
 			        e.preventDefault();
 			    }
 
-					
+				function reverseJoin(arr) {
+					return arr.reverse().join(' > ');
+				  }
 
 			    function chooseTargetHandler(isTrigger, isScroll) {
 			    for (let i = 0; i < children.length; i++) {
@@ -157,10 +173,6 @@ const script = `<div
 			        overlay.lastChild.setAttribute('fill', '#ff000025');
 			        overlay.lastChild.setAttribute('stroke', 'red');
 			    }
-
-
-
-				//splittype Function	
 				
 
 				
